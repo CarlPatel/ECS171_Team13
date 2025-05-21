@@ -1,10 +1,20 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Literal
-
-from predict_models import predict_rf, predict_log_reg, predict_nn
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Enable CORS for your frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Your React frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+from predict_models import predict_rf, predict_log_reg, predict_nn
 
 # Input schema
 class IncomeInput(BaseModel):

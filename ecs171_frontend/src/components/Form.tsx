@@ -3,7 +3,15 @@ import { useState } from "react";
 const Form = () => {
   const [formData, setFormData] = useState({
     age: "",
+    capital_gain: "",
+    capital_loss: "",
+    hours_per_week: "",
+    education_num: "",
+    workclass: "",
+    marital_status: "",
     occupation: "",
+    relationship: "",
+    sex: "Male",
   });
 
   const [results, setResults] = useState<null | {
@@ -23,23 +31,26 @@ const Form = () => {
     setLoading(true);
     setError(null);
 
-    const age = parseInt(formData.age);
-    if (isNaN(age) || age <= 0) {
-      setError("Age must be a positive number");
-      setLoading(false);
-      return;
-    }
+    const parsedData = {
+      age: parseInt(formData.age),
+      capital_gain: parseInt(formData.capital_gain),
+      capital_loss: parseInt(formData.capital_loss),
+      hours_per_week: parseInt(formData.hours_per_week),
+      education_num: parseInt(formData.education_num),
+      workclass: formData.workclass,
+      marital_status: formData.marital_status,
+      occupation: formData.occupation,
+      relationship: formData.relationship,
+      sex: formData.sex,
+    };
 
     try {
-      const response = await fetch("http://localhost:8000/submit", {
+      const response = await fetch("http://localhost:8000/predict/rf", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          age: age,
-          occupation: formData.occupation,
-        }),
+        body: JSON.stringify(parsedData),
       });
 
       if (!response.ok) {
@@ -51,7 +62,14 @@ const Form = () => {
 
       const data = await response.json();
       console.log("Success:", data);
-      setResults(data);
+      setResults({
+        message: "Success",
+        data: {
+          age: formData.age,
+          occupation: formData.occupation,
+          income_chance: data.prediction === ">50K" ? "High" : "Low",
+        },
+      });
     } catch (error) {
       console.error("Error:", error);
       setError(
@@ -70,48 +88,59 @@ const Form = () => {
           className="bg-white rounded-xl shadow-lg p-8 space-y-6 mb-6"
         >
           <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
-            Enter Information
+            Income Classifier
           </h2>
 
           <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Age
-              </label>
-              <input
-                type="number"
-                min="1"
-                value={formData.age}
-                onChange={(e) =>
-                  setFormData({ ...formData, age: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your age"
-              />
-            </div>
+            {[
+              ["Age", "age"],
+              ["Capital Gain", "capital_gain"],
+              ["Capital Loss", "capital_loss"],
+              ["Hours per Week", "hours_per_week"],
+              ["Education Num", "education_num"],
+              ["Workclass", "workclass"],
+              ["Marital Status", "marital_status"],
+              ["Occupation", "occupation"],
+              ["Relationship", "relationship"],
+            ].map(([label, key]) => (
+              <div key={key} className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  {label}
+                </label>
+                <input
+                  type={["age", "capital_gain", "capital_loss", "hours_per_week", "education_num"].includes(key) ? "number" : "text"}
+                  value={formData[key as keyof typeof formData]}
+                  onChange={(e) =>
+                    setFormData({ ...formData, [key]: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  placeholder={`Enter ${label.toLowerCase()}`}
+                />
+              </div>
+            ))}
 
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
-                Occupation
+                Sex
               </label>
-              <input
-                type="text"
-                value={formData.occupation}
+              <select
+                value={formData.sex}
                 onChange={(e) =>
-                  setFormData({ ...formData, occupation: e.target.value })
+                  setFormData({ ...formData, sex: e.target.value })
                 }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                placeholder="Enter your occupation"
-              />
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
             </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className={`w-full ${
-              loading ? "bg-gray-400" : "bg-black hover:bg-black-200"
-            } text-white py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 font-medium`}
+            className={`w-full ${loading ? "bg-gray-400" : "bg-black hover:bg-gray-800"
+              } text-white py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 font-medium`}
           >
             {loading ? "Submitting..." : "Submit"}
           </button>
@@ -126,23 +155,13 @@ const Form = () => {
 
         {results && (
           <div className="bg-white rounded-xl shadow-lg p-8">
-            <div className="border-t border-b border-gray-200 py-4 mb-4">
-              <p className="text-gray-600 mb-1 text-sm">
-                Submitted Information:
-              </p>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="grid grid-cols-2 gap-2">
-                  <p className="font-semibold">Age:</p>
-                  <p>{results.data.age}</p>
-                  <p className="font-semibold">Occupation:</p>
-                  <p>{results.data.occupation}</p>
-                  <p className="font-semibold">
-                    Chance of Income being over $50,000:
-                  </p>
-                  <p>{results.data.income_chance}%</p>
-                </div>
-              </div>
-            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2 text-center">
+              Prediction Result
+            </h3>
+            <p className="text-center text-lg text-blue-700">
+              Chance of income being over $50,000:{" "}
+              <span className="font-bold">{results.data.income_chance}</span>
+            </p>
           </div>
         )}
       </div>
