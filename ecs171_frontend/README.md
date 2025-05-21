@@ -1,3 +1,47 @@
+<!-- Frontend README.md -->
+
+# Frontend
+
+## Setup Instructions
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+
+    ```bash
+    cd ecs171_frontend
+    ```
+
+2.	Install the required Node.js packages:
+
+    ```bash
+    npm install
+    ```
+
+### Running the Application
+
+Start the Frontend Development Server
+1.	Open a new terminal window.
+2.	Navigate to the ecs171_frontend directory (if needed):
+    ```bash
+    cd ecs171_frontend
+    ```
+3.	Start the development server:
+    ```bash
+    npm run dev
+    ```
+The frontend will be available at http://localhost:5173.
+
+### Using the Application
+1.	Open your web browser and navigate to http://localhost:5173.
+2.	Fill in the form with:
+    - Your age
+    - Your occupation
+3.	Click the Submit button.
+4.	The application will display your predicted chance of having an income over $50,000.
+
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
