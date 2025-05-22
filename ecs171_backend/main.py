@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Literal
 
@@ -6,9 +7,18 @@ from predict_models import predict_rf, predict_log_reg, predict_nn
 
 app = FastAPI()
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 # Input schema
 class IncomeInput(BaseModel):
-    age: int
+    age: int 
     capital_gain: int
     capital_loss: int
     hours_per_week: int
