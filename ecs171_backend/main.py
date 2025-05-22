@@ -43,3 +43,10 @@ def predict_with_log_reg(input: IncomeInput):
 def predict_with_nn(input: IncomeInput):
     prediction = predict_nn(input.dict())
     return {"model": "Neural Network", "prediction": prediction}
+
+
+from visual_models import plot_individual_vs_average
+
+@app.post("/visual/i-vs-avg")
+def individual_vs_avg(input: IncomeInput):
+    return plot_individual_vs_average(input.dict())
