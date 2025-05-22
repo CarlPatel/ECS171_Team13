@@ -45,7 +45,7 @@ const Form = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedModel, setSelectedModel] = useState<ModelType>("log-reg"); // Default to Random Forest
+  const [selectedModel, setSelectedModel] = useState<ModelType>("log-reg"); // Defaulted to Logistic Regression
 
   const modelEndpoints: Record<ModelType, string> = {
     rf: "/predict/rf",
