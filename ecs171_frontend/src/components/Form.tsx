@@ -107,7 +107,7 @@ const Form = () => {
     setError(null);
 
     // Check for empty fields
-    for (const [field, value] of Object.entries(formData)) {
+    for (const [_, value] of Object.entries(formData)) {
       if (value === "") {
         setError(`Please fill in all fields`);
         setLoading(false);
@@ -144,7 +144,7 @@ const Form = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000${modelEndpoints[selectedModel]}`,
+        `https://ecs-171-project-e20e8fb11805.herokuapp.com${modelEndpoints[selectedModel]}`,
         {
           method: "POST",
           headers: {
