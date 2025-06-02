@@ -2,30 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Literal
-from fastapi.middleware.cors import CORSMiddleware
 from .predict_models import predict_rf, predict_log_reg, predict_nn
 
 app = FastAPI()
-
-import os
-from fastapi.staticfiles import StaticFiles
-
-frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "ecs171_frontend", "dist"))
-
-if not os.path.exists(frontend_path):
-    raise RuntimeError(f"[!] Frontend path does not exist: {frontend_path}")
-
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
-
-class SPAStaticFiles(StaticFiles):
-    async def get_response(self, path: str, scope):
-        response = await super().get_response(path, scope)
-        if response.status_code == 404:
-            return FileResponse(os.path.join(self.directory, "index.html"))
-        return response
-
-app.mount("/", SPAStaticFiles(directory=frontend_path, html=True), name="static")
 
 # Add CORS middleware
 app.add_middleware(
