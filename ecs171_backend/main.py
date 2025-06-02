@@ -3,22 +3,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Literal
 from fastapi.middleware.cors import CORSMiddleware
+from .predict_models import predict_rf, predict_log_reg, predict_nn
 
 app = FastAPI()
 
-# Enable CORS for your frontend
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Your React frontend
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+import os
+from fastapi.staticfiles import StaticFiles
 
-from predict_models import predict_rf, predict_log_reg, predict_nn
+frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "ecs171_frontend", "dist"))
 
-app = FastAPI()
+if not os.path.exists(frontend_path):
+    raise RuntimeError(f"[!] Frontend path does not exist: {frontend_path}")
 
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="static")
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,

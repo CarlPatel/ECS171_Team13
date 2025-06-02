@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 
 # Load scalers/encoders once
-scaler = joblib.load("models/scaler.pkl")
-encoder = joblib.load("models/encoder.pkl")
+scaler = joblib.load("ecs171_backend/models/scaler.pkl")
+encoder = joblib.load("ecs171_backend/models/encoder.pkl")
 
 # Column names
 num_cols = ['age', 'capital-gain', 'capital-loss', 'hours-per-week', 'education-num']
