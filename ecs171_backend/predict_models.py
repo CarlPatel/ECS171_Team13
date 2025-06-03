@@ -31,18 +31,18 @@ def preprocess_input(data: dict) -> np.ndarray:
 
 
 def predict_rf(data: dict) -> str:
-    model = joblib.load("models/rf_model.pkl")
+    model = joblib.load("ecs171_backend/models/rf_model.pkl")
     processed = preprocess_input(data)
     return model.predict(processed)[0]
 
 
 def predict_log_reg(data: dict) -> str:
-    model = joblib.load("models/log_reg_model.pkl")
+    model = joblib.load("ecs171_backend/models/log_reg_model.pkl")
     processed = preprocess_input(data)
     return model.predict(processed)[0]
 
 
 def predict_nn(data: dict) -> str:
-    model = joblib.load("models/nn_model.pkl")
+    model = joblib.load("ecs171_backend/models/nn_model.pkl")
     processed = preprocess_input(data)
     return model.predict(processed)[0]
