@@ -45,7 +45,7 @@ const Form = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedModel, setSelectedModel] = useState<ModelType>("log-reg"); // Defaulted to Logistic Regression
+  const [selectedModel, setSelectedModel] = useState<ModelType>("rf"); // Defaulted to random forest
 
   const modelEndpoints: Record<ModelType, string> = {
     rf: "/predict/rf",
@@ -107,7 +107,7 @@ const Form = () => {
     setError(null);
 
     // Check for empty fields
-    for (const [field, value] of Object.entries(formData)) {
+    for (const [_, value] of Object.entries(formData)) {
       if (value === "") {
         setError(`Please fill in all fields`);
         setLoading(false);
@@ -144,7 +144,7 @@ const Form = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000${modelEndpoints[selectedModel]}`,
+        `https://ecs-171-project-e20e8fb11805.herokuapp.com${modelEndpoints[selectedModel]}`,
         {
           method: "POST",
           headers: {
@@ -383,7 +383,7 @@ const Form = () => {
               <select
                 value={formData.occupation}
                 onChange={(e) =>
-                  setFormData({ ...formData, sex: e.target.value })
+                  setFormData({ ...formData, occupation: e.target.value })
                 }
                 className={inputClasses}
                 required
@@ -439,7 +439,7 @@ const Form = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full ${loading ? "bg-gray-400" : "bg-black hover:bg-gray-800"
+            className={`w-full ${loading ? "bg-gray-400" : "bg-black hover:bg-black-200"
               } text-white py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 font-medium`}
           >
             {loading ? "Submitting..." : "Submit"}
@@ -454,22 +454,16 @@ const Form = () => {
         )}
 
         {results && (
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <div className="border-t border-b border-gray-200 py-4 mb-4">
-              <p className="text-gray-600 mb-1 text-sm">
-                Submitted Information:
-              </p>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="grid grid-cols-2 gap-2">
-                  {Object.entries(results.data).map(([key, value]) => (
-                    <React.Fragment key={key}>
-                      <p className="font-semibold">{key.replace("_", " ")}:</p>
-                      <p>{value}</p>
-                    </React.Fragment>
-                  ))}
-                </div>
-              </div>
-            </div>
+          <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              Predicted Income Level
+            </h3>
+            {results.data.income_chance === ">50K" && (
+              <p className="text-lg text-indigo-600 font-bold">{">$50K"}</p>
+            )}
+            {results.data.income_chance === "<=50K" && (
+              <p className="text-lg text-indigo-600 font-bold">{"≤$50K"}</p>
+            )}
           </div>
         )}
       </div>
