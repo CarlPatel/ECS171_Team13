@@ -2,8 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Literal
-
-from predict_models import predict_rf, predict_log_reg, predict_nn
+from .predict_models import predict_rf, predict_log_reg, predict_nn
 
 app = FastAPI()
 
