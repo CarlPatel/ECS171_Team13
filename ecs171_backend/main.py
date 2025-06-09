@@ -2,20 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Literal
-from fastapi.middleware.cors import CORSMiddleware
-
-app = FastAPI()
-
-# Enable CORS for your frontend
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Your React frontend
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-from predict_models import predict_rf, predict_log_reg, predict_nn
+from .predict_models import predict_rf, predict_log_reg, predict_nn
 
 app = FastAPI()
 
@@ -55,10 +42,3 @@ def predict_with_log_reg(input: IncomeInput):
 def predict_with_nn(input: IncomeInput):
     prediction = predict_nn(input.dict())
     return {"model": "Neural Network", "prediction": prediction}
-
-
-from visual_models import plot_individual_vs_average
-
-@app.post("/visual/i-vs-avg")
-def individual_vs_avg(input: IncomeInput):
-    return plot_individual_vs_average(input.dict())
